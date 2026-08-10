@@ -1,0 +1,9 @@
+
+> ai-services-gateway@1.0.0 dev
+> node --watch src/index.js
+
+◇ injected env (17) from .env // tip: ⌘ suppress logs { quiet: true }
+🚀 Server running on port 3000
+📝 Environment: development
+📍 Base URL: http://localhost:3000
+Completed running 'src/index.js'. Waiting for file changes before restarting...

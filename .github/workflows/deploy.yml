@@ -1,0 +1,43 @@
+name: Deploy apps-model-server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚀 Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+
+          script: |
+            cd /home/ubuntu/apps-model-server
+
+            echo "📥 Fetching latest code..."
+            git fetch origin
+
+            echo "🔄 Resetting to latest main..."
+            git reset --hard origin/main
+
+            echo "🧹 Cleaning untracked files..."
+            git clean -fd
+
+            echo "📦 Installing dependencies..."
+            npm ci
+
+            echo "⚙️ Building app..."
+            npm run build || echo "No build step"
+
+            echo "♻️ Restarting PM2..."
+            pm2 restart apps-model-server || pm2 start npm --name "apps-model-server" -- start
+
+            echo "💾 Saving PM2..."
+            pm2 save
